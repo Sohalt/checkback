@@ -23,8 +23,8 @@
       };
     })
     // {
-      overlays.default = final: prev: {
+      overlays.default = nixpkgs.lib.composeExtensions wbba.overlays.default (final: prev: {
         checkback = final.callPackage ./package.nix {};
-      };
+      });
     };
 }

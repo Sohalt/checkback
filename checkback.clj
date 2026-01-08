@@ -104,11 +104,18 @@
                    line))))
        not-empty))
 
+(defn println-err [line]
+  (binding [*out* *err*] (println line)))
+
 (defn checkback []
+  (println-err "starting checkback...")
+  (when (nil? github-token)
+    (println-err "WARN: No $GITHUB_TOKEN defined. Might run into rate limits and cannot access private repos."))
   (when-let [lines (lines-with-updates)]
     (doseq [{:keys [file line-number line]} lines]
-      (binding [*out* *err*] (println (format "updates for %s:%s %s" file line-number line))))
-    (System/exit 1)))
+      (println-err (format "updates for %s:%s %s" file line-number line)))
+    (System/exit 1))
+  (println-err "no updates"))
 
 (when (= *file* (System/getProperty "babashka.file"))
   (checkback))

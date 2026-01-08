@@ -17,15 +17,17 @@
 
 (defn checkback-lines []
   (->> (p/shell {:out :string
-                 :continue true} "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$2@$3@$4@$5@$6" "CHECKBACK: ?(https?://)?github.com/([^/]+)/([^/]+)/(issues|pull|tags|releases)/?(\\d+)? ?(\".+\")?")
+                 :continue true}
+                "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$1@$3@$4@$5@$6@$7" "CHECKBACK: ?((https?://)?github.com/([^/]+)/([^/]+)/(issues|pull|tags|releases)/?(\\d+)? ?(\".+\")?)")
        :out
        str/split-lines
        (filter (complement str/blank?))))
 
 (defn parse-line [line]
-  (let [[_ file line match] (re-matches #"([^:]+):([^:]+):(.*)" line)
-        [owner repo type num regex] (str/split match #"@")]
+  (let [[_ file line-number match] (re-matches #"([^:]+):([^:]+):(.*)" line)
+        [line owner repo type num regex] (str/split match #"@")]
     {:file file
+     :line-number line-number
      :line line
      :owner owner
      :repo repo
@@ -104,8 +106,8 @@
 
 (defn checkback []
   (when-let [lines (lines-with-updates)]
-    (doseq [line lines]
-      (binding [*out* *err*] (println "updates for " line)))
+    (doseq [{:keys [file line-number line]} lines]
+      (binding [*out* *err*] (println (format "updates for %s:%s %s" file line-number line))))
     (System/exit 1)))
 
 (when (= *file* (System/getProperty "babashka.file"))

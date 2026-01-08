@@ -16,10 +16,11 @@
       (json/parse-string body keyword))))
 
 (defn checkback-lines []
-  (-> (p/shell {:out :string
-                :continue true} "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$2@$3@$4@$5@$6" "CHECKBACK: (https?://)?github.com/([^/]+)/([^/]+)/(issues|pulls|tags|releases)/?(\\d+)? (\".+\")?")
-      :out
-      str/split-lines))
+  (->> (p/shell {:out :string
+                 :continue true} "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$2@$3@$4@$5@$6" "CHECKBACK: (https?://)?github.com/([^/]+)/([^/]+)/(issues|pulls|tags|releases)/?(\\d+)? (\".+\")?")
+       :out
+       str/split-lines
+       (filter (complement str/blank?))))
 
 (defn parse-line [line]
   (let [[_ file line match] (re-matches #"([^:]+):([^:]+):(.*)" line)

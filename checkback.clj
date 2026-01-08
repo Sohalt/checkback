@@ -85,20 +85,28 @@
     (when date-for-tag
       (> date-for-tag after))))
 
+(defn lines-with-updates []
+  (->> (checkback-lines)
+       (keep (fn [line]
+               (let [{:as line :keys [type regex]} (parse-line line)
+                     line (assoc line :after (date-for-line line))]
+                 (when (case type
+                         "issues" (if regex
+                                    (issue-has-update? line)
+                                    (issue-closed? line))
+                         "pulls" (if regex
+                                   (pr-has-update? line)
+                                   (pr-closed? line))
+                         "releases" (newer-release? line)
+                         "tags" (newer-tag? line))
+                   line))))
+       not-empty))
+
 (defn checkback []
-  (doseq [line (checkback-lines)]
-    (let [{:as line :keys [type regex]} (parse-line line)
-          line (assoc line :after (date-for-line line))]
-      (when (case type
-         "issues" (if regex
-                    (issue-has-update? line)
-                    (issue-closed? line))
-         "pulls" (if regex
-                   (pr-has-update? line)
-                   (pr-closed? line))
-         "releases" (newer-release? line)
-         "tags" (newer-tag? line))
-        (println "updates for " line)))))
+  (when-let [lines (lines-with-updates)]
+    (doseq [line lines]
+      (binding [*out* *err*] (println "updates for " line)))
+    (System/exit 1)))
 
 (when (= *file* (System/getProperty "babashka.file"))
   (checkback))

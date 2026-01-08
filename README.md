@@ -7,10 +7,10 @@ Searches for comments to Github issues and PRs and reports if there was any acti
 ```C
 
 // Did the PR get closed?
-//CHECKBACK: https://github.com/org/repo/pulls/123
+//CHECKBACK: https://github.com/org/repo/pull/123
 
 // Did the PR get new comments matching the regex "fix.*" since this line got added?
-//CHECKBACK: https://github.com/org/repo/pulls/123 "fix.*"
+//CHECKBACK: https://github.com/org/repo/pull/123 "fix.*"
 
 // Did the issue get closed?
 //CHECKBACK: https://github.com/org/repo/issues/123

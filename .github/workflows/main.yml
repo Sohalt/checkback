@@ -1,0 +1,40 @@
+name: Continuous Delivery
+
+env:
+  CLOJURE_VERSION: '1.12.0.1479'
+  JAVA_VERSION: '21.0.3'
+
+on:
+  push:
+    tags-ignore:
+      - '[a-z0-9]**'
+    branches:
+      - '**'
+
+  # allow for manual running of this workflow on the occasional case when github
+  # actions is being wonky
+  workflow_dispatch: null
+
+jobs:
+  checkback:
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install babashka
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          bb: latest
+
+      - name: Update apt
+        run: sudo apt-get update
+
+      - name: Install ripgrep
+        run: sudo apt install -y ripgrep
+
+      - name: Run checkback
+        run: bb -f <(curl https://raw.githubusercontent.com/Sohalt/checkback/refs/heads/main/checkback.clj)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

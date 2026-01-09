@@ -37,6 +37,8 @@ jobs:
 
       - run: ls
 
+      - run: rg --version
+
       - run: rg CHECKBACK
 
       - name: Run checkback

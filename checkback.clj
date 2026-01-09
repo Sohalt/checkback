@@ -87,7 +87,7 @@
     (when date-for-tag
       (> date-for-tag after))))
 
-(def ^:dynamic *verbose* true)
+(def ^:dynamic *verbose* false)
 
 (defn lines-with-updates []
   (->> (checkback-lines)

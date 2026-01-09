@@ -18,7 +18,7 @@
 (defn checkback-lines []
   (->> (p/shell {:out :string
                  :continue true}
-                "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$1@$3@$4@$5@$6@$7" "CHECKBACK: ?((https?://)?github.com/([^/]+)/([^/]+)/(issues|pull|tags|releases)/?(\\d+)? ?(\".+\")?)")
+                "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$1@$3@$4@$5@$6@$7" "CHECKBACK: ?((https?://)?github.com/([^/]+)/([^/]+)/(issues|pull|tags|releases)/?(\\d+)? ?(\".+\")?)" "./.")
        :out
        str/split-lines
        (filter (complement str/blank?))))

@@ -35,7 +35,7 @@ jobs:
       - name: Install ripgrep
         run: sudo apt install -y ripgrep
 
-      - run: rg --version
-
-      - run: |
-          rg CHECKBACK ./.
+      - name: Run checkback
+        run: bb -f checkback.clj
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

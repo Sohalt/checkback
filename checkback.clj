@@ -11,7 +11,7 @@
 (defn github-api-req [url]
   (let [{:keys [status body]} (h/get (str "https://api.github.com" url) {:headers (cond-> {"Accept" "application/vnd.github.v3+json"}
                                                                                     github-token (assoc "Authorization" (str "Bearer " github-token)))
-                                                                         #_#_:throw false})]
+                                                                         :throw false})]
     (when (= 200 status)
       (json/parse-string body keyword))))
 

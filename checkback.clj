@@ -87,11 +87,15 @@
     (when date-for-tag
       (> date-for-tag after))))
 
+(def ^:dynamic *verbose* true)
+
 (defn lines-with-updates []
   (->> (checkback-lines)
        (keep (fn [line]
                (let [{:as line :keys [type regex]} (parse-line line)
                      line (assoc line :after (date-for-line line))]
+                 (when *verbose*
+                   (prn line))
                  (when (case type
                          "issues" (if regex
                                     (issue-has-update? line)

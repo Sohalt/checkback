@@ -36,6 +36,6 @@ jobs:
         run: sudo apt install -y ripgrep
 
       - name: Run checkback
-        run: bb -f <(curl https://raw.githubusercontent.com/Sohalt/checkback/refs/heads/main/checkback.clj)
+        run: bb -f checkback.clj
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

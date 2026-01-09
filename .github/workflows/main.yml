@@ -40,7 +40,9 @@ jobs:
       - run: rg --version
 
       - run: |
+          echo FOO
           rg CHECKBACK
+          echo BAR
 
       - name: Run checkback
         run: bb -f checkback.clj

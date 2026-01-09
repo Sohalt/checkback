@@ -41,7 +41,7 @@ jobs:
 
       - run: |
           echo FOO
-          rg CHECKBACK
+          #rg CHECKBACK
           echo BAR
 
       - name: Run checkback

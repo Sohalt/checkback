@@ -1,1 +1,0 @@
-CHECKBACK: https://github.com/Sohalt/checkback/issues/1

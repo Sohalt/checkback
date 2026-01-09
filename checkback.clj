@@ -11,14 +11,14 @@
 (defn github-api-req [url]
   (let [{:keys [status body]} (h/get (str "https://api.github.com" url) {:headers (cond-> {"Accept" "application/vnd.github.v3+json"}
                                                                                     github-token (assoc "Authorization" (str "Bearer " github-token)))
-                                                                         #_#_:throw false})]
+                                                                         :throw false})]
     (when (= 200 status)
       (json/parse-string body keyword))))
 
 (defn checkback-lines []
   (->> (p/shell {:out :string
                  :continue true}
-                "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$1@$3@$4@$5@$6@$7" "CHECKBACK: ?((https?://)?github.com/([^/]+)/([^/]+)/(issues|pull|tags|releases)/?(\\d+)? ?(\".+\")?)")
+                "rg" "--with-filename" "--line-number" "--only-matching" "--replace" "$1@$3@$4@$5@$6@$7" "CHECKBACK: ?((https?://)?github.com/([^/]+)/([^/]+)/(issues|pull|tags|releases)/?(\\d+)? ?(\".+\")?)" "./.")
        :out
        str/split-lines
        (filter (complement str/blank?))))
@@ -87,11 +87,15 @@
     (when date-for-tag
       (> date-for-tag after))))
 
+(def ^:dynamic *verbose* false)
+
 (defn lines-with-updates []
   (->> (checkback-lines)
        (keep (fn [line]
                (let [{:as line :keys [type regex]} (parse-line line)
                      line (assoc line :after (date-for-line line))]
+                 (when *verbose*
+                   (prn line))
                  (when (case type
                          "issues" (if regex
                                     (issue-has-update? line)
